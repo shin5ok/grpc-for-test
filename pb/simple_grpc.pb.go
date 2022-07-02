@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SimpleClient interface {
 	GetMessage(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Message, error)
 	PutMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Name, error)
+	PingPong(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 }
 
 type simpleClient struct {
@@ -52,12 +53,22 @@ func (c *simpleClient) PutMessage(ctx context.Context, in *Message, opts ...grpc
 	return out, nil
 }
 
+func (c *simpleClient) PingPong(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
+	err := c.cc.Invoke(ctx, "/simple.Simple/PingPong", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SimpleServer is the server API for Simple service.
 // All implementations should embed UnimplementedSimpleServer
 // for forward compatibility
 type SimpleServer interface {
 	GetMessage(context.Context, *Name) (*Message, error)
 	PutMessage(context.Context, *Message) (*Name, error)
+	PingPong(context.Context, *Message) (*Message, error)
 }
 
 // UnimplementedSimpleServer should be embedded to have forward compatible implementations.
@@ -69,6 +80,9 @@ func (UnimplementedSimpleServer) GetMessage(context.Context, *Name) (*Message, e
 }
 func (UnimplementedSimpleServer) PutMessage(context.Context, *Message) (*Name, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PutMessage not implemented")
+}
+func (UnimplementedSimpleServer) PingPong(context.Context, *Message) (*Message, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingPong not implemented")
 }
 
 // UnsafeSimpleServer may be embedded to opt out of forward compatibility for this service.
@@ -118,6 +132,24 @@ func _Simple_PutMessage_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Simple_PingPong_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SimpleServer).PingPong(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/simple.Simple/PingPong",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SimpleServer).PingPong(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Simple_ServiceDesc is the grpc.ServiceDesc for Simple service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var Simple_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PutMessage",
 			Handler:    _Simple_PutMessage_Handler,
+		},
+		{
+			MethodName: "PingPong",
+			Handler:    _Simple_PingPong_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
