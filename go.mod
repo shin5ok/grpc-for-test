@@ -3,6 +3,7 @@ module github.com/shin5ok/grpc-for-test
 go 1.18
 
 require (
+	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/pereslava/grpc_zerolog v0.0.3
 	github.com/prometheus/client_golang v1.12.2
