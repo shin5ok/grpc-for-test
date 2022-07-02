@@ -67,6 +67,10 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 	return &pb.Name{Name: name, Id: strconv.Itoa(id)}, nil
 }
 
+func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
+	return &pb.Message{Message: "Pong"}, nil
+}
+
 func main() {
 	serverLogger := log.Level(zerolog.TraceLevel)
 	grpc_zerolog.ReplaceGrpcLogger(zerolog.New(os.Stderr).Level(zerolog.ErrorLevel))
