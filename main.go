@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
@@ -13,6 +15,7 @@ import (
 
 	pb "github.com/shin5ok/grpc-for-test/pb"
 
+	"github.com/google/uuid"
 	"github.com/pereslava/grpc_zerolog"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -24,6 +27,7 @@ import (
 )
 
 var port string = os.Getenv("PORT")
+var appPort = "8080"
 var promPort = "18080"
 
 type healthCheck struct{}
@@ -34,6 +38,33 @@ func init() {
 	zerolog.TimestampFieldName = "timestamp"
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 
+}
+
+type newServerImplement struct{}
+
+func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb.Message, error) {
+	log.
+		Info().
+		Str("method", "PutMessage").
+		Str("Name as args", fmt.Sprintf("%+v", fmt.Sprintf("%+v", name))).
+		Send()
+
+	newName := name
+	message := fmt.Sprintf("The message is from Id:'%s'", newName.Id)
+	return &pb.Message{Id: newName, Message: message}, nil
+}
+
+func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message) (*pb.Name, error) {
+	log.
+		Info().
+		Str("method", "PutMessage").
+		Str("Params", fmt.Sprintf("%+v", message)).
+		Send()
+
+	rand.Seed(time.Now().UnixNano())
+	id := rand.Intn(100)
+	name := uuid.New().String()
+	return &pb.Name{Name: name, Id: strconv.Itoa(id)}, nil
 }
 
 func main() {
@@ -54,7 +85,7 @@ func main() {
 	)
 
 	if port == "" {
-		port = "8080"
+		port = appPort
 	}
 
 	listenPort, err := net.Listen("tcp", fmt.Sprintf(":%v", port))
@@ -92,14 +123,4 @@ func (h *healthCheck) Check(context.Context, *health.HealthCheckRequest) (*healt
 
 func (h *healthCheck) Watch(*health.HealthCheckRequest, health.Health_WatchServer) error {
 	return status.Error(codes.Unimplemented, "No implementation for Watch")
-}
-
-type newServerImplement struct{}
-
-func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb.Message, error) {
-	return &pb.Message{}, nil
-}
-
-func (n *newServerImplement) PutMessage(ctx context.Context, name *pb.Message) (*pb.Name, error) {
-	return &pb.Name{}, nil
 }
