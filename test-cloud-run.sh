@@ -4,3 +4,7 @@ CLOUD_RUN_HOST=$1
 grpcurl -vv -proto proto/simple.proto -d '{"id":"test"}' ${CLOUD_RUN_HOST}:443 simple.Simple.GetMessage
 sleep 1
 grpcurl -vv -proto proto/simple.proto -d '{"message":"test message"}' ${CLOUD_RUN_HOST}:443 simple.Simple.PutMessage
+
+# for Cloud Run service required auth
+AUTH=$(gcloud auth print-identity-token)
+grpcurl -H "Authorization: Bearer $AUTH" -proto proto/simple.proto auth-grpc-for-test-txs72dpc4q-an.a.run.app:443 simple.Simple.PingPong
