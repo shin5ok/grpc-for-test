@@ -1,0 +1,19 @@
+syntax = "proto3";
+// import "google/protobuf/empty.proto";
+option go_package = "github.com/shin5ok/grpc-for-test/pb";
+package simple;
+
+service Simple {
+  rpc GetMessage (Name) returns (Message) {};
+  rpc PutMessage (Message) returns (Name) {};
+}
+
+message Message {
+  Name id = 1;
+  string message = 2;
+}
+
+message Name {
+    string id = 1;
+    string name = 2;
+}
