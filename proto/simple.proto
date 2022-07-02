@@ -6,6 +6,7 @@ package simple;
 service Simple {
   rpc GetMessage (Name) returns (Message) {};
   rpc PutMessage (Message) returns (Name) {};
+  rpc PingPong (Message) returns (Message) {};
 }
 
 message Message {
