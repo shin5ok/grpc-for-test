@@ -51,7 +51,7 @@ func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb
 
 	newName := name
 	message := fmt.Sprintf("The message is from Id:'%s'", newName.Id)
-	return &pb.Message{Id: newName, Message: message}, nil
+	return &pb.Message{Name: newName, Message: message}, nil
 }
 
 func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message) (*pb.Name, error) {
@@ -63,8 +63,8 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Intn(100)
-	name := uuid.New().String()
-	return &pb.Name{Name: name, Id: strconv.Itoa(id)}, nil
+	nameText := uuid.New().String()
+	return &pb.Name{Text: nameText, Id: strconv.Itoa(id)}, nil
 }
 
 func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
