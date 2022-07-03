@@ -23,6 +23,7 @@ import (
 	health "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var port string = os.Getenv("PORT")
@@ -68,6 +69,17 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 
 func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
 	return &pb.Message{Message: "Pong"}, nil
+}
+
+func (n *newServerImplement) ListMessage(empty *emptypb.Empty, stream pb.Simple_ListMessageServer) error {
+	max := 3
+	for n := 0; n < max; n++ {
+		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
+		if err := stream.Send(result); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func main() {
