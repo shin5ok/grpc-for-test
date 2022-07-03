@@ -78,13 +78,12 @@ func main() {
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			grpc_zerolog.NewPayloadUnaryServerInterceptor(serverLogger),
-			grpc_zerolog.NewPayloadUnaryServerInterceptor(serverLogger),
 			grpc_prometheus.UnaryServerInterceptor,
 		),
 		grpc.ChainStreamInterceptor(
-			grpc_zerolog.NewPayloadStreamServerInterceptor(serverLogger),
 			grpc_zerolog.NewStreamServerInterceptor(serverLogger),
 			grpc_prometheus.StreamServerInterceptor,
+			grpc_zerolog.NewPayloadStreamServerInterceptor(serverLogger),
 		),
 	)
 
