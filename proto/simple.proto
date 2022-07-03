@@ -10,11 +10,11 @@ service Simple {
 }
 
 message Message {
-  Name id = 1;
+  Name name = 1;
   string message = 2;
 }
 
 message Name {
     string id = 1;
-    string name = 2;
+    string text = 2;
 }
