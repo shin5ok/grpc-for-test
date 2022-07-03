@@ -1,5 +1,5 @@
 syntax = "proto3";
-// import "google/protobuf/empty.proto";
+import "google/protobuf/empty.proto";
 option go_package = "github.com/shin5ok/grpc-for-test/pb";
 package simple;
 
@@ -7,6 +7,7 @@ service Simple {
   rpc GetMessage (Name) returns (Message) {};
   rpc PutMessage (Message) returns (Name) {};
   rpc PingPong (Message) returns (Message) {};
+  rpc ListMessage (google.protobuf.Empty) returns (stream Message) {}
 }
 
 message Message {

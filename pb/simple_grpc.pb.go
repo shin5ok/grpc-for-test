@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,6 +26,7 @@ type SimpleClient interface {
 	GetMessage(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Message, error)
 	PutMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Name, error)
 	PingPong(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
+	ListMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Simple_ListMessageClient, error)
 }
 
 type simpleClient struct {
@@ -62,6 +64,38 @@ func (c *simpleClient) PingPong(ctx context.Context, in *Message, opts ...grpc.C
 	return out, nil
 }
 
+func (c *simpleClient) ListMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Simple_ListMessageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Simple_ServiceDesc.Streams[0], "/simple.Simple/ListMessage", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &simpleListMessageClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Simple_ListMessageClient interface {
+	Recv() (*Message, error)
+	grpc.ClientStream
+}
+
+type simpleListMessageClient struct {
+	grpc.ClientStream
+}
+
+func (x *simpleListMessageClient) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SimpleServer is the server API for Simple service.
 // All implementations should embed UnimplementedSimpleServer
 // for forward compatibility
@@ -69,6 +103,7 @@ type SimpleServer interface {
 	GetMessage(context.Context, *Name) (*Message, error)
 	PutMessage(context.Context, *Message) (*Name, error)
 	PingPong(context.Context, *Message) (*Message, error)
+	ListMessage(*emptypb.Empty, Simple_ListMessageServer) error
 }
 
 // UnimplementedSimpleServer should be embedded to have forward compatible implementations.
@@ -83,6 +118,9 @@ func (UnimplementedSimpleServer) PutMessage(context.Context, *Message) (*Name, e
 }
 func (UnimplementedSimpleServer) PingPong(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PingPong not implemented")
+}
+func (UnimplementedSimpleServer) ListMessage(*emptypb.Empty, Simple_ListMessageServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListMessage not implemented")
 }
 
 // UnsafeSimpleServer may be embedded to opt out of forward compatibility for this service.
@@ -150,6 +188,27 @@ func _Simple_PingPong_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Simple_ListMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(SimpleServer).ListMessage(m, &simpleListMessageServer{stream})
+}
+
+type Simple_ListMessageServer interface {
+	Send(*Message) error
+	grpc.ServerStream
+}
+
+type simpleListMessageServer struct {
+	grpc.ServerStream
+}
+
+func (x *simpleListMessageServer) Send(m *Message) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // Simple_ServiceDesc is the grpc.ServiceDesc for Simple service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +229,12 @@ var Simple_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Simple_PingPong_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ListMessage",
+			Handler:       _Simple_ListMessage_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "simple.proto",
 }
