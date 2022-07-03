@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
@@ -50,7 +49,7 @@ func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb
 		Send()
 
 	newName := name
-	message := fmt.Sprintf("The message is from Id:'%s'", newName.Id)
+	message := fmt.Sprintf("The message is from Id:'%d'", newName.Id)
 	return &pb.Message{Name: newName, Message: message}, nil
 }
 
@@ -64,7 +63,7 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Intn(100)
 	nameText := uuid.New().String()
-	return &pb.Name{Text: nameText, Id: strconv.Itoa(id)}, nil
+	return &pb.Name{Text: nameText, Id: int32(id)}, nil
 }
 
 func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
