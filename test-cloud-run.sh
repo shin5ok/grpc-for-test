@@ -8,3 +8,4 @@ grpcurl -vv -proto proto/simple.proto -d '{"message":"test message"}' ${CLOUD_RU
 # for Cloud Run service required auth
 TOKEN=$(gcloud auth print-identity-token)
 grpcurl -H "Authorization: Bearer $TOKEN" -proto proto/simple.proto ${CLOUD_RUN_HOST}:443 simple.Simple.PingPong
+grpcurl -H "Authorization: Bearer $TOKEN" -proto proto/simple.proto ${CLOUD_RUN_HOST}:443 simple.Simple.ListMessage
