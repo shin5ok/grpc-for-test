@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"math/rand"
 	"net"
 	"net/http"
@@ -80,6 +81,23 @@ func (n *newServerImplement) ListMessage(empty *emptypb.Empty, stream pb.Simple_
 		}
 	}
 	return nil
+}
+
+func (n *newServerImplement) BulkPutMessage(stream pb.Simple_BulkPutMessageServer) error {
+	var results []*pb.Message
+	var i = 0
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			log.Info().
+				Str("Results", fmt.Sprintf("message %+v", results))
+			return stream.SendAndClose(&emptypb.Empty{})
+		}
+		log.Info().
+			Int("i", i).
+			Str("data", fmt.Sprintf("%+v", req.Message))
+		results = append(results, req)
+	}
 }
 
 func main() {
