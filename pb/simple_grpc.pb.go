@@ -27,6 +27,7 @@ type SimpleClient interface {
 	PutMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Name, error)
 	PingPong(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	ListMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Simple_ListMessageClient, error)
+	BulkPutMessage(ctx context.Context, opts ...grpc.CallOption) (Simple_BulkPutMessageClient, error)
 }
 
 type simpleClient struct {
@@ -96,6 +97,40 @@ func (x *simpleListMessageClient) Recv() (*Message, error) {
 	return m, nil
 }
 
+func (c *simpleClient) BulkPutMessage(ctx context.Context, opts ...grpc.CallOption) (Simple_BulkPutMessageClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Simple_ServiceDesc.Streams[1], "/simple.Simple/BulkPutMessage", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &simpleBulkPutMessageClient{stream}
+	return x, nil
+}
+
+type Simple_BulkPutMessageClient interface {
+	Send(*Message) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type simpleBulkPutMessageClient struct {
+	grpc.ClientStream
+}
+
+func (x *simpleBulkPutMessageClient) Send(m *Message) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *simpleBulkPutMessageClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SimpleServer is the server API for Simple service.
 // All implementations should embed UnimplementedSimpleServer
 // for forward compatibility
@@ -104,6 +139,7 @@ type SimpleServer interface {
 	PutMessage(context.Context, *Message) (*Name, error)
 	PingPong(context.Context, *Message) (*Message, error)
 	ListMessage(*emptypb.Empty, Simple_ListMessageServer) error
+	BulkPutMessage(Simple_BulkPutMessageServer) error
 }
 
 // UnimplementedSimpleServer should be embedded to have forward compatible implementations.
@@ -121,6 +157,9 @@ func (UnimplementedSimpleServer) PingPong(context.Context, *Message) (*Message, 
 }
 func (UnimplementedSimpleServer) ListMessage(*emptypb.Empty, Simple_ListMessageServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListMessage not implemented")
+}
+func (UnimplementedSimpleServer) BulkPutMessage(Simple_BulkPutMessageServer) error {
+	return status.Errorf(codes.Unimplemented, "method BulkPutMessage not implemented")
 }
 
 // UnsafeSimpleServer may be embedded to opt out of forward compatibility for this service.
@@ -209,6 +248,32 @@ func (x *simpleListMessageServer) Send(m *Message) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _Simple_BulkPutMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SimpleServer).BulkPutMessage(&simpleBulkPutMessageServer{stream})
+}
+
+type Simple_BulkPutMessageServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*Message, error)
+	grpc.ServerStream
+}
+
+type simpleBulkPutMessageServer struct {
+	grpc.ServerStream
+}
+
+func (x *simpleBulkPutMessageServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *simpleBulkPutMessageServer) Recv() (*Message, error) {
+	m := new(Message)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // Simple_ServiceDesc is the grpc.ServiceDesc for Simple service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -234,6 +299,11 @@ var Simple_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "ListMessage",
 			Handler:       _Simple_ListMessage_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "BulkPutMessage",
+			Handler:       _Simple_BulkPutMessage_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "simple.proto",
