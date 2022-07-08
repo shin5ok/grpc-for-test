@@ -30,6 +30,7 @@ import (
 var port string = os.Getenv("PORT")
 var appPort = "8080"
 var promPort = "18080"
+var progName = "grpc-for-test"
 
 type healthCheck struct{}
 
@@ -48,6 +49,7 @@ func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb
 		Info().
 		Str("method", "PutMessage").
 		Str("Name as args", fmt.Sprintf("%+v", fmt.Sprintf("%+v", name))).
+		Str("logName", progName).
 		Send()
 
 	newName := name
@@ -60,6 +62,7 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 		Info().
 		Str("method", "PutMessage").
 		Str("Params", fmt.Sprintf("%+v", message)).
+		Str("logName", progName).
 		Send()
 
 	rand.Seed(time.Now().UnixNano())
@@ -90,12 +93,14 @@ func (n *newServerImplement) BulkPutMessage(stream pb.Simple_BulkPutMessageServe
 		req, err := stream.Recv()
 		if err == io.EOF {
 			log.Info().
-				Str("Results", fmt.Sprintf("message %+v", results))
+				Str("Results", fmt.Sprintf("message %+v", results)).
+				Send()
 			return stream.SendAndClose(&emptypb.Empty{})
 		}
 		log.Info().
 			Int("i", i).
-			Str("data", fmt.Sprintf("%+v", req.Message))
+			Str("data", fmt.Sprintf("%+v", req.Message)).
+			Send()
 		results = append(results, req)
 	}
 }
