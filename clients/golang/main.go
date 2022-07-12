@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/shin5ok/grpc-for-test/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 var (
@@ -18,10 +20,26 @@ var (
 func main() {
 	host := flag.String("host", GRPC_HOST, "")
 	number := flag.Int("number", 1, "")
+	insecure := flag.Bool("insecure", false, "")
 
 	flag.Parse()
 
-	conn, err := grpc.Dial(*host, grpc.WithInsecure())
+	// https://github.com/grpc-ecosystem/grpc-cloud-run-example/blob/master/python/client.py
+	var conn *grpc.ClientConn
+	var err error
+	if *insecure {
+		conn, err = grpc.Dial(*host, grpc.WithInsecure())
+	} else {
+		creds := credentials.NewTLS(&tls.Config{
+			InsecureSkipVerify: true,
+		})
+
+		opts := []grpc.DialOption{
+			grpc.WithTransportCredentials(creds),
+		}
+		conn, err = grpc.Dial(*host, opts...)
+	}
+
 	client := pb.NewSimpleClient(conn)
 
 	if err != nil {
