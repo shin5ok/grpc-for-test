@@ -72,8 +72,8 @@ func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) 
 	return &pb.Message{Message: "Pong"}, nil
 }
 
-func (n *newServerImplement) ListMessage(empty *emptypb.Empty, stream pb.Simple_ListMessageServer) error {
-	max := 3
+func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListMessageServer) error {
+	max := int(req.Number)
 	for n := 0; n < max; n++ {
 		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
 		if err := stream.Send(result); err != nil {
