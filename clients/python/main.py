@@ -10,14 +10,17 @@ import typing
 import click
 
 grpc_host = os.environ.get("GRPC_HOST")
+insecure = os.environ.get("INSECURE")
 
-channel = grpc.insecure_channel(grpc_host)
+if insecure:
+    channel = grpc.insecure_channel(grpc_host)
+else:
+    channel = grpc.secure_channel(grpc_host, grpc.ssl_channel_credentials())
 stub = pb2_grpc.SimpleStub(channel)
 
-
-
 @click.group()
-def cli():
+@click.option("--insecure", is_flag=False)
+def cli(insecure: bool):
     ...
 
 @cli.command()
