@@ -26,7 +26,7 @@ type SimpleClient interface {
 	GetMessage(ctx context.Context, in *Name, opts ...grpc.CallOption) (*Message, error)
 	PutMessage(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Name, error)
 	PingPong(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
-	ListMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Simple_ListMessageClient, error)
+	ListMessage(ctx context.Context, in *Request, opts ...grpc.CallOption) (Simple_ListMessageClient, error)
 	BulkPutMessage(ctx context.Context, opts ...grpc.CallOption) (Simple_BulkPutMessageClient, error)
 }
 
@@ -65,7 +65,7 @@ func (c *simpleClient) PingPong(ctx context.Context, in *Message, opts ...grpc.C
 	return out, nil
 }
 
-func (c *simpleClient) ListMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Simple_ListMessageClient, error) {
+func (c *simpleClient) ListMessage(ctx context.Context, in *Request, opts ...grpc.CallOption) (Simple_ListMessageClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Simple_ServiceDesc.Streams[0], "/simple.Simple/ListMessage", opts...)
 	if err != nil {
 		return nil, err
@@ -138,7 +138,7 @@ type SimpleServer interface {
 	GetMessage(context.Context, *Name) (*Message, error)
 	PutMessage(context.Context, *Message) (*Name, error)
 	PingPong(context.Context, *Message) (*Message, error)
-	ListMessage(*emptypb.Empty, Simple_ListMessageServer) error
+	ListMessage(*Request, Simple_ListMessageServer) error
 	BulkPutMessage(Simple_BulkPutMessageServer) error
 }
 
@@ -155,7 +155,7 @@ func (UnimplementedSimpleServer) PutMessage(context.Context, *Message) (*Name, e
 func (UnimplementedSimpleServer) PingPong(context.Context, *Message) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PingPong not implemented")
 }
-func (UnimplementedSimpleServer) ListMessage(*emptypb.Empty, Simple_ListMessageServer) error {
+func (UnimplementedSimpleServer) ListMessage(*Request, Simple_ListMessageServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListMessage not implemented")
 }
 func (UnimplementedSimpleServer) BulkPutMessage(Simple_BulkPutMessageServer) error {
@@ -228,7 +228,7 @@ func _Simple_PingPong_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Simple_ListMessage_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(emptypb.Empty)
+	m := new(Request)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
