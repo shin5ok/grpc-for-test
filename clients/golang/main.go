@@ -5,8 +5,10 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/shin5ok/grpc-for-test/pb"
 	"google.golang.org/grpc"
@@ -21,6 +23,7 @@ func main() {
 	host := flag.String("host", GRPC_HOST, "")
 	number := flag.Int("number", 1, "")
 	insecure := flag.Bool("insecure", false, "")
+	stdout := flag.Bool("stdout", false, "")
 
 	flag.Parse()
 
@@ -49,12 +52,24 @@ func main() {
 
 	{
 		ctx := context.Background()
+		start := time.Now()
 		request := &pb.Request{Number: int32(*number)}
-		responses, _ := client.ListMessage(ctx, request)
-		fmt.Printf("%-v\n", responses)
-		// for r := responses {
-		// 	fmt.Println(r)
-		// }
+		stream, _ := client.ListMessage(ctx, request)
+		for {
+			reponse, err := stream.Recv()
+			if err == io.EOF {
+				finish := time.Now()
+				delta := finish.Sub(start)
+				fmt.Printf("%s\n", delta)
+				os.Exit(0)
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+			if *stdout {
+				fmt.Println(reponse.GetMessage())
+			}
+		}
 	}
 
 }
