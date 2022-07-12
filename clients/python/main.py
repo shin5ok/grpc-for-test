@@ -5,9 +5,9 @@ import grpc
 import os
 import pb.simple_pb2 as pb2
 import pb.simple_pb2_grpc as pb2_grpc
-from pydantic import BaseModel
 import typing
 import click
+import datetime
 
 grpc_host = os.environ.get("GRPC_HOST")
 insecure = os.environ.get("INSECURE")
@@ -19,8 +19,7 @@ else:
 stub = pb2_grpc.SimpleStub(channel)
 
 @click.group()
-@click.option("--insecure", is_flag=False)
-def cli(insecure: bool):
+def cli():
     ...
 
 @cli.command()
@@ -34,11 +33,17 @@ def put_message() -> None:
 
 @cli.command()
 @click.option("--number", type=int, default=1)
-def list_message(number: int) -> None:
+@click.option("--stdout", is_flag=True, default=False)
+def list_message(number: int, stdout: bool) -> None:
+    start = datetime.datetime.now()
     request = pb2.Request(number=number)
     r = stub.ListMessage(request)
     for x in r:
-        print(x, end='')
+        if stdout:
+            print(x, end='')
+    finish = datetime.datetime.now()
+    delta = finish - start
+    print(f"{delta.total_seconds()}\n")
 
 if __name__ == '__main__':
     cli()
