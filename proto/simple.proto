@@ -7,7 +7,7 @@ service Simple {
   rpc GetMessage (Name) returns (Message) {};
   rpc PutMessage (Message) returns (Name) {};
   rpc PingPong (Message) returns (Message) {};
-  rpc ListMessage (google.protobuf.Empty) returns (stream Message) {};
+  rpc ListMessage (Request) returns (stream Message) {};
   rpc BulkPutMessage (stream Message) returns (google.protobuf.Empty) {};
 }
 
@@ -19,4 +19,8 @@ message Message {
 message Name {
     int32 id = 1;
     string text = 2;
+}
+
+message Request {
+  int32 number = 1;
 }
