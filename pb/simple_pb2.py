@@ -15,12 +15,13 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csimple.proto\x12\x06simple\x1a\x1bgoogle/protobuf/empty.proto\"6\n\x07Message\x12\x1a\n\x04name\x18\x01 \x01(\x0b\x32\x0c.simple.Name\x12\x0f\n\x07message\x18\x02 \x01(\t\" \n\x04Name\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04text\x18\x02 \x01(\t2\x91\x02\n\x06Simple\x12-\n\nGetMessage\x12\x0c.simple.Name\x1a\x0f.simple.Message\"\x00\x12-\n\nPutMessage\x12\x0f.simple.Message\x1a\x0c.simple.Name\"\x00\x12.\n\x08PingPong\x12\x0f.simple.Message\x1a\x0f.simple.Message\"\x00\x12:\n\x0bListMessage\x12\x16.google.protobuf.Empty\x1a\x0f.simple.Message\"\x00\x30\x01\x12=\n\x0e\x42ulkPutMessage\x12\x0f.simple.Message\x1a\x16.google.protobuf.Empty\"\x00(\x01\x42%Z#github.com/shin5ok/grpc-for-test/pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csimple.proto\x12\x06simple\x1a\x1bgoogle/protobuf/empty.proto\"6\n\x07Message\x12\x1a\n\x04name\x18\x01 \x01(\x0b\x32\x0c.simple.Name\x12\x0f\n\x07message\x18\x02 \x01(\t\" \n\x04Name\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04text\x18\x02 \x01(\t\"\x19\n\x07Request\x12\x0e\n\x06number\x18\x01 \x01(\x05\x32\x8a\x02\n\x06Simple\x12-\n\nGetMessage\x12\x0c.simple.Name\x1a\x0f.simple.Message\"\x00\x12-\n\nPutMessage\x12\x0f.simple.Message\x1a\x0c.simple.Name\"\x00\x12.\n\x08PingPong\x12\x0f.simple.Message\x1a\x0f.simple.Message\"\x00\x12\x33\n\x0bListMessage\x12\x0f.simple.Request\x1a\x0f.simple.Message\"\x00\x30\x01\x12=\n\x0e\x42ulkPutMessage\x12\x0f.simple.Message\x1a\x16.google.protobuf.Empty\"\x00(\x01\x42%Z#github.com/shin5ok/grpc-for-test/pbb\x06proto3')
 
 
 
 _MESSAGE = DESCRIPTOR.message_types_by_name['Message']
 _NAME = DESCRIPTOR.message_types_by_name['Name']
+_REQUEST = DESCRIPTOR.message_types_by_name['Request']
 Message = _reflection.GeneratedProtocolMessageType('Message', (_message.Message,), {
   'DESCRIPTOR' : _MESSAGE,
   '__module__' : 'simple_pb2'
@@ -35,6 +36,13 @@ Name = _reflection.GeneratedProtocolMessageType('Name', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Name)
 
+Request = _reflection.GeneratedProtocolMessageType('Request', (_message.Message,), {
+  'DESCRIPTOR' : _REQUEST,
+  '__module__' : 'simple_pb2'
+  # @@protoc_insertion_point(class_scope:simple.Request)
+  })
+_sym_db.RegisterMessage(Request)
+
 _SIMPLE = DESCRIPTOR.services_by_name['Simple']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
@@ -44,6 +52,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _MESSAGE._serialized_end=107
   _NAME._serialized_start=109
   _NAME._serialized_end=141
-  _SIMPLE._serialized_start=144
-  _SIMPLE._serialized_end=417
+  _REQUEST._serialized_start=143
+  _REQUEST._serialized_end=168
+  _SIMPLE._serialized_start=171
+  _SIMPLE._serialized_end=437
 # @@protoc_insertion_point(module_scope)

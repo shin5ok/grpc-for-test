@@ -32,7 +32,7 @@ class SimpleStub(object):
                 )
         self.ListMessage = channel.unary_stream(
                 '/simple.Simple/ListMessage',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=simple__pb2.Request.SerializeToString,
                 response_deserializer=simple__pb2.Message.FromString,
                 )
         self.BulkPutMessage = channel.stream_unary(
@@ -95,7 +95,7 @@ def add_SimpleServicer_to_server(servicer, server):
             ),
             'ListMessage': grpc.unary_stream_rpc_method_handler(
                     servicer.ListMessage,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=simple__pb2.Request.FromString,
                     response_serializer=simple__pb2.Message.SerializeToString,
             ),
             'BulkPutMessage': grpc.stream_unary_rpc_method_handler(
@@ -176,7 +176,7 @@ class Simple(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_stream(request, target, '/simple.Simple/ListMessage',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            simple__pb2.Request.SerializeToString,
             simple__pb2.Message.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
