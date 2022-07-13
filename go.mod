@@ -1,4 +1,4 @@
-module github.com/shin5ok/grpc-for-test
+module github.com/shin5ok/proto-grpc-simple
 
 go 1.18
 
