@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csimple.proto\x12\x06simple\x1a\x1bgoogle/protobuf/empty.proto\"6\n\x07Message\x12\x1a\n\x04name\x18\x01 \x01(\x0b\x32\x0c.simple.Name\x12\x0f\n\x07message\x18\x02 \x01(\t\" \n\x04Name\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04text\x18\x02 \x01(\t\"\x19\n\x07Request\x12\x0e\n\x06number\x18\x01 \x01(\x05\x32\x8a\x02\n\x06Simple\x12-\n\nGetMessage\x12\x0c.simple.Name\x1a\x0f.simple.Message\"\x00\x12-\n\nPutMessage\x12\x0f.simple.Message\x1a\x0c.simple.Name\"\x00\x12.\n\x08PingPong\x12\x0f.simple.Message\x1a\x0f.simple.Message\"\x00\x12\x33\n\x0bListMessage\x12\x0f.simple.Request\x1a\x0f.simple.Message\"\x00\x30\x01\x12=\n\x0e\x42ulkPutMessage\x12\x0f.simple.Message\x1a\x16.google.protobuf.Empty\"\x00(\x01\x42%Z#github.com/shin5ok/grpc-for-test/pbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0csimple.proto\x12\x06simple\x1a\x1bgoogle/protobuf/empty.proto\"6\n\x07Message\x12\x1a\n\x04name\x18\x01 \x01(\x0b\x32\x0c.simple.Name\x12\x0f\n\x07message\x18\x02 \x01(\t\" \n\x04Name\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04text\x18\x02 \x01(\t\"\x19\n\x07Request\x12\x0e\n\x06number\x18\x01 \x01(\x05\x32\x8a\x02\n\x06Simple\x12-\n\nGetMessage\x12\x0c.simple.Name\x1a\x0f.simple.Message\"\x00\x12-\n\nPutMessage\x12\x0f.simple.Message\x1a\x0c.simple.Name\"\x00\x12.\n\x08PingPong\x12\x0f.simple.Message\x1a\x0f.simple.Message\"\x00\x12\x33\n\x0bListMessage\x12\x0f.simple.Request\x1a\x0f.simple.Message\"\x00\x30\x01\x12=\n\x0e\x42ulkPutMessage\x12\x0f.simple.Message\x1a\x16.google.protobuf.Empty\"\x00(\x01\x42)Z\'github.com/shin5ok/proto-grpc-simple/pbb\x06proto3')
 
 
 
@@ -47,7 +47,7 @@ _SIMPLE = DESCRIPTOR.services_by_name['Simple']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'Z#github.com/shin5ok/grpc-for-test/pb'
+  DESCRIPTOR._serialized_options = b'Z\'github.com/shin5ok/proto-grpc-simple/pb'
   _MESSAGE._serialized_start=53
   _MESSAGE._serialized_end=107
   _NAME._serialized_start=109
