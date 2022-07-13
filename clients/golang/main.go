@@ -10,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/shin5ok/grpc-for-test/pb"
+	"github.com/shin5ok/proto-grpc-simple/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -27,7 +27,6 @@ func main() {
 
 	flag.Parse()
 
-	// https://github.com/grpc-ecosystem/grpc-cloud-run-example/blob/master/python/client.py
 	var conn *grpc.ClientConn
 	var err error
 	if *insecure {

@@ -13,7 +13,7 @@ import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	pb "github.com/shin5ok/grpc-for-test/pb"
+	pb "github.com/shin5ok/proto-grpc-simple/pb"
 
 	"github.com/google/uuid"
 	"github.com/pereslava/grpc_zerolog"
