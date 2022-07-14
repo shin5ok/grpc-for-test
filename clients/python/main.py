@@ -40,7 +40,7 @@ def list_message(number: int, stdout: bool) -> None:
     r = stub.ListMessage(request)
     for x in r:
         if stdout:
-            print(x, end='')
+            print(x.message, end='\n')
     finish = datetime.datetime.now()
     delta = finish - start
     print(f"{delta.total_seconds()}\n")

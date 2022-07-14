@@ -66,7 +66,7 @@ func main() {
 				log.Fatal(err)
 			}
 			if *stdout {
-				fmt.Println(reponse.GetMessage())
+				fmt.Println(reponse.Message)
 			}
 		}
 	}
