@@ -12,10 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/golang/mock/gomock"
 	pb "github.com/shin5ok/proto-grpc-simple/pb"
-
-	mock_repo "github.com/shin5ok/proto-grpc-simple/mock"
 )
 
 var lis *bufconn.Listener
@@ -126,38 +123,6 @@ func TestPutMessage(t *testing.T) {
 
 	if !re.MatchString(resp.Text) {
 		t.Errorf("not match message: %s", resp.Text)
-
-	}
-
-}
-
-func TestMockGetMessage(t *testing.T) {
-
-	ctx := context.Background()
-
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	// mockClient := mock_repo.NewMockSimpleClient(mockCtrl)
-	mockClient := mock_repo.NewMockSimpleClient(mockCtrl)
-
-	result := fmt.Sprintf("The message is from Id:'%d'", 10)
-	mockClient.EXPECT().GetMessage(
-		ctx,
-		&pb.Name{Id: 10, Text: "foo"},
-	).Return(&pb.Message{Message: result}, nil)
-
-	for _, param := range []*pb.Name{
-		&pb.Name{Id: 10, Text: "foo"},
-	} {
-		resp, err := mockClient.GetMessage(ctx, param)
-		if err != nil {
-			t.Error(err)
-		}
-
-		result := fmt.Sprintf("The message is from Id:'%d'", param.Id)
-		if resp.Message != result {
-			t.Error(resp.Message)
-		}
 
 	}
 
