@@ -46,7 +46,7 @@ type newServerImplement struct{}
 func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb.Message, error) {
 	log.
 		Info().
-		Str("method", "PutMessage").
+		Str("method", "GetMessage").
 		Str("Name as args", fmt.Sprintf("%+v", fmt.Sprintf("%+v", name))).
 		Send()
 
