@@ -58,12 +58,12 @@ func TestGetMessage(t *testing.T) {
 		resp, err := client.GetMessage(ctx, param)
 		// log.Printf("%+v\n", param)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 
 		result := fmt.Sprintf("The message is from Id:'%d'", param.Id)
 		if resp.Message != result {
-			t.Fatal(resp.Message)
+			t.Error(resp.Message)
 		}
 
 	}
@@ -88,12 +88,12 @@ func TestListMessage(t *testing.T) {
 			break
 		}
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 
 		shouldValue := fmt.Sprintf("send %d", n)
 		if response.Message != shouldValue {
-			t.Fatal(response.Message)
+			t.Error(response.Message)
 		}
 		n++
 	}
