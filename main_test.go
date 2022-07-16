@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"regexp"
 	"testing"
 
 	"google.golang.org/grpc"
@@ -96,4 +97,33 @@ func TestListMessage(t *testing.T) {
 		}
 		n++
 	}
+}
+
+func TestPutMessage(t *testing.T) {
+
+	ctx := context.Background()
+	conn, err := grpc.DialContext(ctx, "localhost", grpc.WithContextDialer(bufDialer), grpc.WithInsecure())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	client := pb.NewSimpleClient(conn)
+
+	name := &pb.Name{Id: 10, Text: "foo"}
+	message := &pb.Message{Message: "foo is message", Name: name}
+
+	resp, err := client.PutMessage(ctx, message)
+	if err != nil {
+		t.Error(err)
+	}
+
+	regexStr := `^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$`
+	re := regexp.MustCompile(regexStr)
+
+	if !re.MatchString(resp.Text) {
+		t.Errorf("not match message: %s", resp.Text)
+
+	}
+
 }
