@@ -23,13 +23,23 @@ def cli():
     ...
 
 @cli.command()
-def put_message() -> None:
-    name = pb2.Name(id=1, text="tako")
-    message = pb2.Message(name=name, message="takosuke")
+@click.option("--number", type=int, default=1)
+@click.option("--stdout", is_flag=True, default=False)
+@click.argument("value", default="foo")
+def put_message(number: int, stdout: bool, value: str) -> None:
+    start = datetime.datetime.now()
+    for id in range(1, number):
+        name = pb2.Name(id=id, text=value)
+        message = pb2.Message(name=name, message="tako")
 
-    results = stub.PutMessage(message)
+        results = stub.PutMessage(message)
+        if stdout:
+            print(results, end='')
 
-    print(results)
+    finish = datetime.datetime.now()
+    delta = finish - start
+    print(f"{delta.total_seconds()}\n")
+
 
 @cli.command()
 @click.option("--number", type=int, default=1)
