@@ -39,8 +39,9 @@ def list_message(number: int, stdout: bool) -> None:
     request = pb2.Request(number=number)
     r = stub.ListMessage(request)
     for x in r:
+        value = x.message
         if stdout:
-            print(x.message, end='\n')
+            print(value, end='\n')
     finish = datetime.datetime.now()
     delta = finish - start
     print(f"{delta.total_seconds()}\n")
