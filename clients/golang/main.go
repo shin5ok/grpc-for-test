@@ -24,6 +24,7 @@ func main() {
 	number := flag.Int("number", 1, "")
 	insecure := flag.Bool("insecure", false, "")
 	stdout := flag.Bool("stdout", false, "")
+	mode := flag.String("mode", "list-message", "")
 
 	flag.Parse()
 
@@ -49,7 +50,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	{
+	if *mode == "list-message" {
 		ctx := context.Background()
 		start := time.Now()
 		request := &pb.Request{Number: int32(*number)}
@@ -69,6 +70,19 @@ func main() {
 				fmt.Println(reponse.Message)
 			}
 		}
+	} else if *mode == "put-message" {
+		ctx := context.Background()
+		start := time.Now()
+
+		message := "foo"
+		for id := 0; id < *number; id++ {
+			name := &pb.Name{Id: int32(id), Text: "foo"}
+			client.PutMessage(ctx, &pb.Message{Name: name, Message: message})
+		}
+		finish := time.Now()
+		delta := finish.Sub(start)
+		fmt.Printf("%s\n", delta)
+
 	}
 
 }
