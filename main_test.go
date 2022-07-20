@@ -55,16 +55,19 @@ func TestGetMessage(t *testing.T) {
 		&pb.Name{Id: 20, Text: "テスト"},
 		&pb.Name{Id: 100000, Text: "big int number"},
 	} {
-		resp, err := client.GetMessage(ctx, param)
-		// log.Printf("%+v\n", param)
-		if err != nil {
-			t.Error(err)
-		}
 
-		result := fmt.Sprintf("The message is from Id:'%d'", param.Id)
-		if resp.Message != result {
-			t.Error(resp.Message)
-		}
+		t.Run(param.Text, func(t *testing.T) {
+			resp, err := client.GetMessage(ctx, param)
+			// log.Printf("%+v\n", param)
+			if err != nil {
+				t.Error(err)
+			}
+
+			result := fmt.Sprintf("The message is from Id:'%d'", param.Id)
+			if resp.Message != result {
+				t.Error(resp.Message)
+			}
+		})
 
 	}
 }
