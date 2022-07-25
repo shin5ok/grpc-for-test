@@ -1,0 +1,2 @@
+*.go linguist-language=Go
+pb/* linguist-generated=true
