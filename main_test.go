@@ -84,6 +84,10 @@ func TestListMessage(t *testing.T) {
 
 	stream, err := client.ListMessage(ctx, &pb.Request{Number: 10})
 
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	n := 0
 	for {
 		response, err := stream.Recv()
