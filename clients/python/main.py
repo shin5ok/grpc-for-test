@@ -9,8 +9,8 @@ import typing
 import click
 import datetime
 
-grpc_host = os.environ.get("GRPC_HOST")
-insecure = os.environ.get("INSECURE")
+grpc_host: str = os.environ.get("GRPC_HOST")
+insecure: str = os.environ.get("INSECURE")
 
 if insecure:
     channel = grpc.insecure_channel(grpc_host)
