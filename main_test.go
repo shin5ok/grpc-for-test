@@ -51,9 +51,9 @@ func TestGetMessage(t *testing.T) {
 	client := pb.NewSimpleClient(conn)
 
 	for _, param := range []*pb.Name{
-		&pb.Name{Id: 10, Text: "foo"},
-		&pb.Name{Id: 20, Text: "テスト"},
-		&pb.Name{Id: 100000, Text: "big int number"},
+		{Id: 10, Text: "foo"},
+		{Id: 20, Text: "テスト"},
+		{Id: 100000, Text: "big int number"},
 	} {
 
 		t.Run(param.Text, func(t *testing.T) {
