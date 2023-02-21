@@ -1,0 +1,11 @@
+FROM golang:1.19-alpine as builder
+WORKDIR /app
+COPY ./pb/ ./pb/
+COPY ./main.go ./go.* ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/bin/main
+
+FROM debian:buster-slim AS runner
+ENV TZ Asia/Tokyo
+COPY --from=builder /app/bin/main /main
+USER nobody
+CMD ["/main"]
