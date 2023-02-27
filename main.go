@@ -77,7 +77,7 @@ func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListM
 	for n := 0; n < max; n++ {
 		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
 		if err := stream.Send(result); err != nil {
-			return err
+			return status.Error(codes.Internal, err.Error())
 		}
 	}
 	return nil
