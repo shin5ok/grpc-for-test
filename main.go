@@ -10,6 +10,8 @@ import (
 	"os"
 	"time"
 
+	"encoding/json"
+
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -92,7 +94,7 @@ func (n *newServerImplement) BulkPutMessage(stream pb.Simple_BulkPutMessageServe
 			log.Info().
 				Str("Results", fmt.Sprintf("message %+v", results)).
 				Send()
-			return stream.SendAndClose(&emptypb.Empty{})
+			break
 		}
 		log.Info().
 			Int("i", i).
@@ -100,6 +102,12 @@ func (n *newServerImplement) BulkPutMessage(stream pb.Simple_BulkPutMessageServe
 			Send()
 		results = append(results, req)
 	}
+	data, err := json.Marshal(results)
+	if err != nil {
+		return status.Error(codes.Aborted, err.Error())
+	}
+	log.Info().RawJSON("result", data).Send()
+	return stream.SendAndClose(&emptypb.Empty{})
 }
 
 func main() {
