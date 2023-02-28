@@ -49,6 +49,11 @@ func init() {
 	zerolog.TimestampFieldName = "timestamp"
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 
+	if domain == "" {
+		log.Info().Msg("domain is not set")
+		os.Exit(1)
+	}
+
 }
 
 func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb.Message, error) {
