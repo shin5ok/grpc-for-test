@@ -1,1 +1,6 @@
-gcloud run deploy --source=. grpc-for-test --region=asia-northeast1 --allow-unauthenticated $@
+gcloud run deploy \
+--source=. \
+--region=asia-northeast1 \
+--allow-unauthenticated \
+--use-http2 \
+grpc-for-test $@
