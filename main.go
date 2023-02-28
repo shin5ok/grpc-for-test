@@ -64,7 +64,7 @@ func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb
 		Send()
 
 	newName, err := func(ctx context.Context) (*pb.Name, error) {
-		ctx, span := n.t.Start(ctx, "foo")
+		ctx, span := n.t.Start(ctx, "get message")
 		defer span.End()
 		_ = ctx
 
