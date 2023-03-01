@@ -86,6 +86,9 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 		Str("Params", fmt.Sprintf("%+v", message)).
 		Send()
 
+	_, span := n.tracer.Start(ctx, "put message")
+	defer span.End()
+
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Intn(100)
 	nameText := uuid.New().String()
@@ -164,9 +167,9 @@ func main() {
 		serverLogger.Fatal().Msg(err.Error())
 	}
 
-	var newServer = newServerImplement{
-		t: t,
-	}
+	var newServer = newServerImplement{}
+	newServer.tracer = t
+
 	pb.RegisterSimpleServer(server, &newServer)
 
 	var h = &healthCheck{}
@@ -179,11 +182,11 @@ func main() {
 		if err := http.ListenAndServe(":"+promPort, nil); err != nil {
 			panic(err)
 		}
-		serverLogger.Info().Msgf("prometheus listening on :%s\n", promPort)
+		serverLogger.Info().Msgf("prometheus listening on :%s for %s\n", promPort, projectID)
 	}()
 
 	reflection.Register(server)
-	serverLogger.Info().Msgf("Listening on %s\n", port)
+	serverLogger.Info().Msgf("Listening on %s for %s\n", port, projectID)
 	server.Serve(listenPort)
 
 }
