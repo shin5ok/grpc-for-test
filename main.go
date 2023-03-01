@@ -14,6 +14,7 @@ import (
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
 
 	pb "github.com/shin5ok/proto-grpc-simple/pb"
@@ -146,15 +147,19 @@ func main() {
 
 	t := otel.GetTracerProvider().Tracer(domain)
 
+	interceptorOpt := otelgrpc.WithTracerProvider(otel.GetTracerProvider())
+
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			grpc_zerolog.NewPayloadUnaryServerInterceptor(serverLogger),
 			grpc_prometheus.UnaryServerInterceptor,
+			otelgrpc.UnaryServerInterceptor(interceptorOpt),
 		),
 		grpc.ChainStreamInterceptor(
 			grpc_zerolog.NewStreamServerInterceptor(serverLogger),
 			grpc_prometheus.StreamServerInterceptor,
 			grpc_zerolog.NewPayloadStreamServerInterceptor(serverLogger),
+			otelgrpc.StreamServerInterceptor(interceptorOpt),
 		),
 	)
 
