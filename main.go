@@ -103,10 +103,20 @@ func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) 
 func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListMessageServer) error {
 
 	ctx := context.Background()
-	_, span := n.tracer.Start(ctx, "list message")
+	ctx, span := n.tracer.Start(ctx, "invoking list message")
 	defer span.End()
 
+	log.
+		Info().
+		Str("method", "PutMessage").
+		Str("Params", fmt.Sprintf("%+v", req)).
+		Send()
+
 	max := int(req.Number)
+
+	_, span = n.tracer.Start(ctx, "doing list message")
+	defer span.End()
+
 	for n := 0; n < max; n++ {
 		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
 		if err := stream.Send(result); err != nil {
