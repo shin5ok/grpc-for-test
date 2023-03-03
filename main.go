@@ -145,7 +145,7 @@ func main() {
 	serverLogger := log.Level(zerolog.TraceLevel)
 	grpc_zerolog.ReplaceGrpcLogger(zerolog.New(os.Stderr).Level(zerolog.ErrorLevel))
 
-	tp := exporter(projectID, "sample")
+	tp := tpExporter(projectID, "sample")
 	ctx := context.Background()
 	defer tp.ForceFlush(ctx)
 	otel.SetTracerProvider(tp)

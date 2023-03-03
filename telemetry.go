@@ -11,7 +11,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 )
 
-func exporter(projectID, serviceName string) *sdktrace.TracerProvider {
+func tpExporter(projectID, serviceName string) *sdktrace.TracerProvider {
 	exporter, err := texporter.New(texporter.WithProjectID(projectID))
 	if err != nil {
 		log.Fatalf("texporter.New: %v", err)
