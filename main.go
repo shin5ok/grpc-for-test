@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"encoding/json"
@@ -35,6 +36,8 @@ import (
 var port string = os.Getenv("PORT")
 var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
 var domain = os.Getenv("DOMAIN")
+var sleep = os.Getenv("SLEEP")
+var sleepSecond int
 
 var appPort = "8080"
 var promPort = "18080"
@@ -53,6 +56,10 @@ func init() {
 	if domain == "" {
 		log.Info().Msg("domain is not set")
 		os.Exit(1)
+	}
+
+	if sleep != "" {
+		sleepSecond, _ = strconv.Atoi(sleep)
 	}
 
 }
@@ -121,6 +128,9 @@ func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListM
 		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
 		if err := stream.Send(result); err != nil {
 			return status.Error(codes.Internal, err.Error())
+		}
+		if sleepSecond > 0 {
+			time.Sleep(time.Second * time.Duration(sleepSecond))
 		}
 	}
 	return nil
