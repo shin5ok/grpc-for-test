@@ -108,7 +108,7 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 }
 
 func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
-	ctx, span := otel.Tracer("main").Start(ctx, "PingPong")
+	ctx, span := n.tracer.Start(ctx, "ping pong")
 	defer span.End()
 
 	return &pb.Message{Message: "Pong"}, nil
@@ -117,7 +117,7 @@ func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) 
 func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListMessageServer) error {
 
 	ctx := context.Background()
-	ctx, span := n.tracer.Start(ctx, "invoking list message")
+	ctx, span := n.tracer.Start(ctx, "list message")
 	defer span.End()
 
 	log.
