@@ -65,16 +65,18 @@ func init() {
 }
 
 func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb.Message, error) {
+	ctx, span := n.tracer.Start(ctx, "get message")
+	defer span.End()
+
 	log.
 		Info().
+		Str("logging.googleapis.com/trace", span.SpanContext().TraceID().String()).
+		Str("logging.googleapis.com/spanId", span.SpanContext().SpanID().String()).
 		Str("method", "GetMessage").
 		Str("Name as args", fmt.Sprintf("%+v", fmt.Sprintf("%+v", name))).
 		Send()
 
 	newName, err := func(ctx context.Context) (*pb.Name, error) {
-		ctx, span := n.tracer.Start(ctx, "get message")
-		defer span.End()
-		_ = ctx
 
 		newName := name
 		return newName, nil
@@ -88,14 +90,16 @@ func (n *newServerImplement) GetMessage(ctx context.Context, name *pb.Name) (*pb
 }
 
 func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message) (*pb.Name, error) {
+	ctx, span := n.tracer.Start(ctx, "put message")
+	defer span.End()
+
 	log.
 		Info().
+		Str("logging.googleapis.com/trace", span.SpanContext().TraceID().String()).
+		Str("logging.googleapis.com/spanId", span.SpanContext().SpanID().String()).
 		Str("method", "PutMessage").
 		Str("Params", fmt.Sprintf("%+v", message)).
 		Send()
-
-	_, span := n.tracer.Start(ctx, "put message")
-	defer span.End()
 
 	rand.Seed(time.Now().UnixNano())
 	id := rand.Intn(100)
@@ -104,17 +108,22 @@ func (n *newServerImplement) PutMessage(ctx context.Context, message *pb.Message
 }
 
 func (n *newServerImplement) PingPong(ctx context.Context, message *pb.Message) (*pb.Message, error) {
+	ctx, span := n.tracer.Start(ctx, "ping pong")
+	defer span.End()
+
 	return &pb.Message{Message: "Pong"}, nil
 }
 
 func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListMessageServer) error {
 
 	ctx := context.Background()
-	ctx, span := n.tracer.Start(ctx, "invoking list message")
+	ctx, span := n.tracer.Start(ctx, "list message")
 	defer span.End()
 
 	log.
 		Info().
+		Str("logging.googleapis.com/trace", span.SpanContext().TraceID().String()).
+		Str("logging.googleapis.com/spanId", span.SpanContext().SpanID().String()).
 		Str("method", "PutMessage").
 		Str("Params", fmt.Sprintf("%+v", req)).
 		Send()
@@ -122,7 +131,6 @@ func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListM
 	max := int(req.Number)
 
 	_, span = n.tracer.Start(ctx, "doing list message")
-	defer span.End()
 
 	for n := 0; n < max; n++ {
 		result := &pb.Message{Message: fmt.Sprintf("send %d", n)}
@@ -133,6 +141,8 @@ func (n *newServerImplement) ListMessage(req *pb.Request, stream pb.Simple_ListM
 			time.Sleep(time.Second * time.Duration(sleepSecond))
 		}
 	}
+
+	span.End()
 	return nil
 }
 

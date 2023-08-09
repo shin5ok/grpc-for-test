@@ -10,5 +10,5 @@ gcloud run deploy \
 --region=asia-northeast1 \
 --allow-unauthenticated \
 --use-http2 \
---set-env-vars=DOMAIN=$DOMAIN \
+--set-env-vars=DOMAIN=$DOMAIN,GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT \
 grpc-for-test $@
